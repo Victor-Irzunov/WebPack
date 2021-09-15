@@ -1,0 +1,157 @@
+Webpack 4. Полный курс 2020 /Владилен Минин/от 16 янв. 2020 г
+--------------------------------------------------------------
+
+npm i -D  webpack webpack-cli         - 16:57                //webpack - корневой ф-ционал //webpack-cli - отвечает за команды в консоли
+     (-g)
+___________________________________________
+плагины HTML:
+npm i -D html-webpack-plugin          - 40:45
+npm i -D clean-webpack-plugin         - 46:05
+____________________________________________
+плагины CSS:
+npm i -D style-loader css-loader      - 57:30
+____________________________________________
+плагины img:
+npm i -D file-loader                  - 1:04:20
+____________________________________________
+подключ библиотеки из папки node_modles
+нормализует стили под браузеры
+https://necolas.github.io/normalize.css/          - сброс css (заставляет браузеры отображать все элементы более согласованно и в соответствии с современными стандартами)
+
+npm install normalize.css             - 1:13:40
+____________________________________________
+плагины xml:
+npm i -D xml-loader                   - 1:16:20
+___________________________________________
+плагины csv:
+npm i -D csv-loader                    - 1:18:10
+
+выдала у Минина ошибка он доставил 
+npm i -D papaparse 
+(я не ставил у меня всё норм)
+___________________________________________
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+packege.json:                                                                +
+                                                                             +
+"main": "index.js",             удалил 1:15:20  заменил на ниже              +
+"private": true,              //защитим себя от случайной побликации пакета  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+№3************************************************************************************************************************************************
+npm i -S jquery            - 1:24:54​ 
+____________________________________________
+
+№4 **************************************************************************************************************************************************
+npm i -D webpack-dev-server   -1:35:10
+____________________________________________
+npm i -D copy-webpack-plugin  - 1:40:10
+
+№5 **************************************************************************************************************************************************
+CSS (в отдельный файл):
+npm install --save-dev mini-css-extract-plugin  - 1:43:20
+____________________________________________
+cross-env определяет Опер Систему и устанавливает разрботка или продакшин:
+npm i -D cross-env              - 1:50:45         //const isDev = process.env.NODE_ENV === 'development' режим разработки или 
+_____________________________________________
+CSS (оптимизация)
+npm install terser-webpack-plugin --save-dev   -1:55:10
+_____________________________________________
+CSS (оптимизация)
+npm i --save-dev optimize-css-assets-webpack-plugin       - 1:56:00
+___________________________________________
+LESS:
+npm i -D less-loader          -2:00:10
+npm i less                    - 2:02:40
+___________________________________________
+SASS:
+pm i -D node-sass sass-loader  - 2:06:20
+
+№6 ***babel**************************************************************************************************************************************************
+npm install --save-dev babel-loader @babel/core  - 2:14:20
+___________________________________________
+preset:                                       -это готовый набор плагинов (можно настраиватьподкакие браузеры)
+npm install --save-dev @babel/preset-env      - ..:..:..
+___________________________________________
+polyfill:
+npm install --save @babel/polyfill          - 2:21:20
+___________________________________________
+была ошибка с Class Util: 
+npm i -D @babel/plugin-proposal-class-properties  -2:23:57
+___________________________________________
+
+
+
+
+
+У кого не работает webpack-dev-server решение следующее: 
+Надо в webpack.config.js  в devServer добавить open: true. 
+А команда для запуска сервера в package.json будет выглядеть так "start": "webpack serve --mode development"
+для webpack-dev-server: 
+"start": "webpack serve --mode development --open"
+
+
+
+1:47:08 У кого выдаёт "Automatic publicPath is not supported in this browser", пропишите в options: 
+publicPath: (resourcePath, context) => {
+                                    return path.relative(path.dirname(resourcePath), context) + '/';
+                                }
+
+
+Если пишете в vsCode и вдруг возникнет проблема  с MiniCssExtractPlugin
+Error: Automatic publicPath is not supported in this browser
+
+Получилось победить так: 
+
+test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: path.resolve(__dirname, 'dist') 
+            },
+          }
+          ,'css-loader'
+        ]
+
+
+
+  Если у кого не работает SASS на 2:07:10 : попробуйте переписать вместо
+test: /\.s[ac]ss$/, 
+на 
+test: /\.(sass|scss)$/,
+
+
+
+
+касательно "Автоматизации копирования статических файлов" 1:41:21
+После обновления до 3.11 появился новый шаблон , следующая запись теперь должна выглядеть вот так:
+new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, "src/favicon.ico"),
+                    to: path.resolve(__dirname, "dist")
+                },
+            ]
+        })
+
+
+
+
+
+        Для CopyWebPackPlugin
+   plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'source', to: 'dest' },
+        { from: 'other', to: 'public' },
+      ],
+    }),
+  ],
+
+
+  У меня babel не работал, не мог найти @babel/core. Пока не установил:
+npm i @babel/core --save
+
+в Webpack 5 теперь нужно немного поправить devtool - вместо пустых кавычек '' подставить false
+devtool: isDev ? 'source-map' : false
